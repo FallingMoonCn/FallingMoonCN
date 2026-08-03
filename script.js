@@ -93,18 +93,39 @@
 
       try {
         const payload = Object.fromEntries(new FormData(contactForm).entries());
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+        const web3FormsKey = contactForm.dataset.web3formsKey.trim();
+        const requests = await Promise.allSettled([
+          fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }),
+          fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+              access_key: web3FormsKey,
+              subject: '[FALLINGMOON] ' + payload.subject,
+              from_name: payload.name,
+              name: payload.name,
+              email: payload.email,
+              replyto: payload.email,
+              message: payload.message
+            }).toString()
+          })
+        ]);
+        const serverResponse = requests[0].status === 'fulfilled' ? requests[0].value : null;
+        const web3FormsResponse = requests[1].status === 'fulfilled' ? requests[1].value : null;
+        const serverResult = serverResponse ? await serverResponse.json().catch(function () { return {}; }) : {};
+        const web3FormsResult = web3FormsResponse ? await web3FormsResponse.json().catch(function () { return {}; }) : {};
+        const serverOk = Boolean(serverResponse && serverResponse.ok && serverResult.ok === true && !serverResult.skipped);
+        const web3FormsOk = Boolean(web3FormsResponse && web3FormsResponse.ok && web3FormsResult.success === true);
 
-        const result = await response.json().catch(function () { return {}; });
-        if (!response.ok) throw new Error(result.error || 'Request failed');
+        if (!web3FormsOk && !serverOk) throw new Error('Request failed');
         contactForm.reset();
-        formStatus.textContent = result.partial
-          ? '已提交，但部分通知通道发送失败。'
-          : '已发送，乐队会尽快回复。';
+        formStatus.textContent = web3FormsOk
+          ? '已发送，乐队会尽快回复。'
+          : '已提交，但 Web3Forms 邮件通道发送失败。';
       } catch (error) {
         formStatus.textContent = '发送失败，请直接邮件联系 fallingmoonband@163.com。';
       } finally {

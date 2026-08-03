@@ -42,33 +42,6 @@ async function sendServerChan(sendKey, title, details) {
   }
 }
 
-async function sendWeb3Forms(accessKey, fields) {
-  if (!accessKey) return false;
-
-  try {
-    const response = await fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      },
-      body: JSON.stringify({
-        access_key: accessKey,
-        subject: `[FALLINGMOON] ${fields.subject}`.slice(0, 100),
-        from_name: fields.name,
-        name: fields.name,
-        email: fields.email,
-        replyto: fields.email,
-        message: fields.message
-      })
-    });
-    const result = await response.json();
-    return response.ok && result.success === true;
-  } catch (error) {
-    return false;
-  }
-}
-
 export default {
   async fetch(request, env) {
     const allowedOrigin = env.ALLOWED_ORIGIN || '*';
@@ -89,7 +62,11 @@ export default {
       return jsonResponse({ error: 'Method not allowed.' }, 405, allowedOrigin);
     }
 
-    if (!env.SERVERCHAN_SENDKEY && !env.WEB3FORMS_ACCESS_KEY) {
+    if (env.SERVERCHAN_ENABLED === 'false') {
+      return jsonResponse({ ok: true, skipped: true }, 200, allowedOrigin);
+    }
+
+    if (!env.SERVERCHAN_SENDKEY) {
       return jsonResponse({ error: 'Contact service is not configured.' }, 500, allowedOrigin);
     }
 
@@ -120,19 +97,8 @@ export default {
       message
     ].join('\n');
 
-    const [serverChanOk, web3FormsOk] = await Promise.all([
-      sendServerChan(env.SERVERCHAN_SENDKEY, title, details),
-      sendWeb3Forms(env.WEB3FORMS_ACCESS_KEY, { name, email, subject, message })
-    ]);
-
-    if (serverChanOk && web3FormsOk) {
-      return jsonResponse({ ok: true }, 200, allowedOrigin);
-    }
-
-    if (serverChanOk || web3FormsOk) {
-      return jsonResponse({ ok: true, partial: true }, 200, allowedOrigin);
-    }
-
-    return jsonResponse({ error: 'Notification service failed.' }, 502, allowedOrigin);
+    return sendServerChan(env.SERVERCHAN_SENDKEY, title, details)
+      ? jsonResponse({ ok: true }, 200, allowedOrigin)
+      : jsonResponse({ ok: true, skipped: true }, 200, allowedOrigin);
   }
 };
