@@ -99,9 +99,12 @@
           body: JSON.stringify(payload)
         });
 
-        if (!response.ok) throw new Error('Request failed');
+        const result = await response.json().catch(function () { return {}; });
+        if (!response.ok) throw new Error(result.error || 'Request failed');
         contactForm.reset();
-        formStatus.textContent = '已发送，乐队会尽快回复。';
+        formStatus.textContent = result.partial
+          ? '已提交，但部分通知通道发送失败。'
+          : '已发送，乐队会尽快回复。';
       } catch (error) {
         formStatus.textContent = '发送失败，请直接邮件联系 fallingmoonband@163.com。';
       } finally {
