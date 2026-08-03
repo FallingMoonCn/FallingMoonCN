@@ -85,11 +85,7 @@
     contactForm.addEventListener('submit', async function (event) {
       event.preventDefault();
 
-      const endpoint = contactForm.dataset.endpoint.trim();
-      if (!endpoint) {
-        formStatus.textContent = '接口尚未接入，表单内容暂未发送。';
-        return;
-      }
+      const endpoint = contactForm.dataset.endpoint.trim() || '/api/contact';
 
       const submitButton = contactForm.querySelector('button[type="submit"]');
       submitButton.disabled = true;
@@ -105,7 +101,7 @@
 
         if (!response.ok) throw new Error('Request failed');
         contactForm.reset();
-        formStatus.textContent = '已发送，感谢你的来信。';
+        formStatus.textContent = '已发送，乐队会尽快回复。';
       } catch (error) {
         formStatus.textContent = '发送失败，请直接邮件联系 fallingmoonband@163.com。';
       } finally {
