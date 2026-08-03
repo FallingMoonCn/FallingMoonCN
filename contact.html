@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="联系 FALLINGMOON。">
+  <meta name="theme-color" content="#0d0f0f">
+  <title>联系 / FALLINGMOON</title>
+  <link rel="icon" type="image/png" href="img/FALLINGMOON.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="subpage">
+  <header class="site-header" id="siteHeader">
+    <nav class="site-nav shell" aria-label="主导航">
+      <a class="brand" href="index.html" aria-label="回到首页"><span class="brand__name brand__glyph-word" data-glyph-word="FALLINGMOON" aria-label="FALLINGMOON"></span></a>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="打开导航" aria-expanded="false"><span></span><span></span></button>
+      <div class="nav-panel" id="navPanel">
+        <a class="nav-link" href="index.html">首页</a>
+        <a class="nav-link" href="music.html">音乐</a>
+        <a class="nav-link" href="about.html">关于</a>
+        <a class="nav-link" href="index.html#merch">周边</a>
+        <a class="nav-link nav-link--contact is-active" href="contact.html">联系乐队 <span>↗</span></a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="subpage-main">
+    <section class="subpage-hero">
+      <div class="shell">
+        <p class="subpage-kicker">FALLINGMOON / CONTACT</p>
+        <h1 class="subpage-title">CONTACT</h1>
+        <p class="subpage-copy">演出邀约、合作或媒体采访，请直接联系我们。</p>
+      </div>
+    </section>
+
+    <section class="contact-page section">
+      <div class="shell contact-form-wrap">
+        <div class="contact-form-note">
+          <h2>写给我们</h2>
+          <p>表单接口预留在这里，之后可以直接接入你的邮箱 API。</p>
+          <a href="mailto:fallingmoonband@163.com">fallingmoonband@163.com ↗</a>
+        </div>
+        <form class="contact-form" id="contactForm" data-endpoint="">
+          <div class="form-field"><label for="name">姓名</label><input id="name" name="name" type="text" autocomplete="name" required></div>
+          <div class="form-field"><label for="email">邮箱</label><input id="email" name="email" type="email" autocomplete="email" required></div>
+          <div class="form-field"><label for="subject">主题</label><input id="subject" name="subject" type="text" required></div>
+          <div class="form-field"><label for="message">内容</label><textarea id="message" name="message" required></textarea></div>
+          <button class="form-submit" type="submit">发送邮件 ↗</button>
+          <p class="form-status" id="formStatus" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="shell site-footer__inner"><span>© 2026 FALLINGMOON</span><span>FALLINGMOON</span></div></footer>
+  <script src="script.js"></script>
+</body>
+
+</html>
