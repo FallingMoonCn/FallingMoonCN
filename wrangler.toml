@@ -1,3 +1,6 @@
 name = "fallingmoon-contact"
 main = "worker.js"
 compatibility_date = "2026-08-03"
+
+[vars]
+SERVERCHAN_ENABLED = "false"
